@@ -1,0 +1,105 @@
+#!/bin/bash
+cd ~/Videos # Whatever directory the videos are in
+echo
+echo "Here is a list of your series:"
+echo
+for tm in *; do
+	echo $tm | tr "_" " "
+done
+echo
+if [[ $1 == "--download" || $1 == "-d" ]]; then
+	if [[ $2 == "http://"* || $2 == "https://"* ]]; then
+		echo -n "Series name: "
+		read se
+		for dr in *; do
+			if [[ ${dr,,} == *`echo ${se,,} | tr " " _`* ]]; then
+				sd=$dr
+				break
+			fi
+		done
+		if [[ ! $sd ]]; then
+			echo -n "Create series $se?"
+			read -n1 yn
+			if [[ $yn != `echo -e "\n"` ]]; then
+				echo
+			fi
+			if [[ ${yn,,} == y ]]; then
+				mkdir `echo $se | tr " " _`
+				sd=`echo $se | tr " " _`
+			else
+				echo "Failed to download video"
+				exit
+			fi
+		fi
+		cd $sd
+		echo "Selected series '$sd'"
+		echo -n "What season is this? (ex. 2) "
+		read se
+		echo -n "What episode number is this? (ex. 10) "
+		read en
+		echo -n "What episode name is this? (ex. The Lost Castle) "
+		read em
+		youtube-dl "$2" -o "Season_${se}_Episode_${en} $em-%(title).%(ext)" &&
+		mv "Season_${se}_Episode_${en} $em-"* "Season_${se}_Episode_${en} $em.`echo "Season_${se}_Episode_${en} $em-"* |awk -F . '{print $NF}'`"
+		exit
+	fi
+	echo "This feature is still under development!"
+	exit
+fi
+if [[ $1 == "http://"* || $1 == "https://"* ]]; then
+	mplayer $@
+	exit
+fi
+echo -n "Series name: "
+read se
+for dr in *; do
+	if [[ ${dr,,} == *`echo ${se,,} | tr " " _`* ]]; then
+		cd `echo -e $dr`
+		sd=$dr
+		break
+	fi
+done
+if [[ ! $sd ]]; then
+	if [[ $se != "*" ]]; then
+		echo "Series '$se' not found!"
+		exit
+	fi
+fi
+echo "Selected series '$sd'"
+echo
+echo "Valid inputs:"
+fs=$(find . -type f -exec file -N -i -- {} + | sed -n 's!: video/[^:]*$!!p')
+aa=""
+bb=""
+for ff in $fs; do
+	tm=$ff
+	tm=${tm##*/}
+	tm=${tm%.*}
+	if [[ $tm == Season_*_Episode_* ]]; then
+		tm=`echo $tm | tr _ " "`
+		echo -ne "\n$tm\t"
+		aa=$tm
+		bb=""
+	else
+		echo -n "$tm "
+		if [[ $bb ]]; then
+			bb="$bb $tm"
+		else
+			bb=$tm
+		fi
+	fi
+done
+echo
+echo
+echo "Examples: '$aa' or '$bb'"
+echo -n "What episode to watch: "
+read ti
+if [[ ${ti,,} == "season "*"episode "* ]]; then
+	a=$(find . -iname "`echo $ti | tr " " _`*")
+else
+	a=`find . -iname "*$ti*"`
+fi
+echo "what to watch:"
+echo $a
+IFS=$'\n' b=($a)
+mplayer ${b[@]}
