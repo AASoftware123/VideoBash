@@ -7,8 +7,8 @@ echo "Installing..."
 dr=/tmp/$RANDOM$RANDOM$RANDOM
 mkdir $dr
 cd $dr
-git clone https://github.com/AASoftware123/VideoBash.git
-cd VideoBash
+wget https://raw.githubusercontent.com/AASoftware123/VideoBash/master/watchvideos -O watchvideos
+chmod +x watchvideos
 cp watchvideos /usr/bin/
 if [[ ! `which mplayer` ]]; then
 	echo "Please install the command 'mplayer' in order to use this tool!"
