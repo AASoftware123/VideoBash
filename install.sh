@@ -10,4 +10,10 @@ cd $dr
 git clone https://github.com/AASoftware123/VideoBash.git
 cd VideoBash
 cp watchvideos /usr/bin/
+if [[ ! `which mplayer` ]]; then
+	echo "Please install the command 'mplayer' in order to use this tool!"
+fi
+if [[ ! `which youtube-dl` ]]; then
+	echo "Please install the command 'youtube-dl' in order to use this tool!"
+fi
 echo "Installed VideoBash."
