@@ -10,6 +10,12 @@ for tm in *; do
 	echo $tm | tr "_" " "
 done
 echo
+if [[ $1 == "-u" || $1 == "--update" ]]; then
+	cd /tmp/
+	wget https://raw.githubusercontent.com/AASoftware123/VideoBash/master/install.sh -O install-watchvideos.sh
+	bash install-watchvideos.sh
+	exit
+fi
 if [[ $1 == "--download" || $1 == "-d" ]]; then
 	if [[ $2 == "http://"* || $2 == "https://"* ]]; then
 		echo -n "Series name: "
