@@ -16,4 +16,11 @@ fi
 if [[ ! `which youtube-dl` ]]; then
 	echo "Please install the command 'youtube-dl' in order to use this tool!"
 fi
+if [[ ! `which bash` ]]; then
+	echo "Please install bash to use this tool!"
+else
+if [[ `bash --version` != "GNU bash, version 4"* ]]; then
+	echo "Please install bash, version 4 or higher!"
+fi
+fi
 echo "Installed VideoBash."
